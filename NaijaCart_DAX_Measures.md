@@ -1,8 +1,8 @@
-# 📐 NaijaCart DAX Measures Plan (Final)
+# 📐 NaijaCart DAX Measures Plan 
 
 Trimmed to exactly what the locked 3-page dashboard layout needs — every measure below is tied to a specific KPI card or chart in the Dashboard Build Guide. **15 measures + 1 calculated column, total.**
 
-**Assumed relationships (from the Data Dictionary):**
+**Relationships:**
 `Orders` (1) → `OrderLines` (Many) · `Orders` (1) → `Delivery` (One-to-one, non-cancelled only) · `Date` (1) → `Orders[OrderDate]` (Many) · `Customers`, `Stores`, `Employees`, `Promotions`, `PaymentMethods` all (1) → `Orders` (Many) · `Products` (1) → `OrderLines` (Many) · `Riders` (1) → `Delivery` (Many)
 
 ---
@@ -52,8 +52,7 @@ RANKX ( ALL ( Stores[StoreName] ), [Total Revenue], , DESC )
 
 *Used as an "Advanced filtering" visual-level filter (`Store Revenue Rank <= 10`) on the Top 10 Stores chart, instead of Power BI's built-in Top N filter type. Built-in Top N filters don't respond to cross-filtering from clicking another visual (e.g. selecting a state on the map) — only to slicers and page/report filters. `ALL(Stores[StoreName])` only clears the filter on store name, so a state selection on the map still narrows the ranking pool correctly, while `[Total Revenue]` itself still only includes non-cancelled orders.*
 
-### Charts (no new measures needed)
-
+### Charts 
 - **Revenue trend over time** → line chart plotting `[Total Revenue]` and `[Gross Profit]` together by `Date` hierarchy, **expanded** (not drilled) to Year + MonthName — see Build Guide Note 6
 - **Revenue by region/state** → slice `[Total Revenue]` by `Stores[State]`
 - **Top 10 stores by revenue** → slice `[Total Revenue]` by `Stores[StoreName]`, filtered using `[Store Revenue Rank] <= 10` (see below) rather than a built-in Top N filter
@@ -90,7 +89,7 @@ IF ( OrderLines[DiscountRate] > 0, "Discounted", "Full-Price" )
 
 *Added directly on the `OrderLines` table (Modeling → New Column). This is a calculated column, not a measure — it needs to exist as a physical value per row so it can sit on a chart axis.*
 
-### Charts (no new measures needed)
+### Charts
 
 - **Revenue by category/subcategory** → slice `[Total Revenue]` by `Products[Category]`
 - **Top 10 products by revenue** → slice `[Total Revenue]` by `Products[ProductName]`, Top N filter
@@ -134,8 +133,7 @@ CALCULATE ( AVERAGE ( Delivery[DeliveryTimeHours] ), Delivery[DeliveryStatus] = 
 
 **KPI row (4 cards):** Total Deliveries · Delivery Success Rate · Average Delivery Time (Hrs) · Delivery Failure Rate
 
-### Charts (no new measures needed)
-
+### Charts 
 - **Delivery status breakdown** → plain `COUNT` of `Delivery[DeliveryID]` by `Delivery[DeliveryStatus]`
 - **Avg delivery time by state** → slice `[Average Delivery Time (Hrs)]` by `Delivery[DestinationState]`
 - **Rider/logistics partner ranking** → `[Delivery Success Rate]` sliced by `Riders[RiderName]` / `Riders[LogisticsPartner]`
